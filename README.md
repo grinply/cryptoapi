@@ -1,4 +1,4 @@
-# Universal crypto API
+# Universal Crypto API
 
 **Universal API** interface in Golang that aims to abstract the connection with the [**biggest cryptocurrency exchanges by Volume**](https://coinmarketcap.com/rankings/exchanges/). The API supports both **spot** and **derivative** markets. 
 
