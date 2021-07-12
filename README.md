@@ -1,4 +1,6 @@
-[![Go Report Card](https://goreportcard.com/badge/github.com/grinply/universal-crypto-api)](https://goreportcard.com/report/github.com/grinply/universal-crypto-api)
+[![Go Report Card](https://goreportcard.com/badge/github.com/grinply/universal-crypto-api?style=flat-square)](https://goreportcard.com/report/github.com/grinply/universal-crypto-api)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](/LICENSE.md)
+[![Go Reference](https://pkg.go.dev/badge/github.com/grinply/cryptoapi.svg)](https://pkg.go.dev/github.com/victorl2/kate-backtester)
 # Universal Crypto API
 
 **Universal API** interface in Golang that aims to abstract the connection with the [**biggest cryptocurrency exchanges by Volume**](https://coinmarketcap.com/rankings/exchanges/). The API supports both **spot** and **derivative** markets. 
