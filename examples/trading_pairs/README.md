@@ -1,5 +1,5 @@
 # Trading Pairs in Cryptocurrency
-Understanding how trading pairs work is important for effect use of the  CryptoAPI, but also trading in general.
+Understanding how trading pairs works is important for effect use of the  CryptoAPI, but also trading in general.
 In cryptocurrency, _“trading pairs” or “cryptocurrency pairs”_ are assets that can be traded for each other on an exchange — for example Bitcoin/Litecoin **(BTC/LTC)** and Ethereum/Bitcoin Cash **(ETH/BCH)**. Trading pairs lets you compare costs between different cryptocurrencies.
 
 ### Operating in an trading pair
