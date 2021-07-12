@@ -3,7 +3,14 @@ package trade
 const (
 	LIMIT  OrderType = "LIMIT"
 	MARKET OrderType = "MARKET"
+
+	BUY  TradeDirection = "BUY"
+	SELL TradeDirection = "SELL"
 )
+
+// TradeDirection denotes the direction of a trade Order
+// example: BUY, SELL
+type TradeDirection string
 
 // OrderType is a the type of a order that can be executed in the exchange.
 // example: LIMIT, MARKET
@@ -11,7 +18,13 @@ type OrderType string
 
 // Order represents a request to buy or sell a amount of cryptocurrency/token in the crypto exchange.
 type Order struct {
-	OrderType OrderType `json:"order_type"`
+	ID          string         `json:"id"`
+	TradingPair CurrencyPair   `json:"trading_pair"`
+	OrderType   OrderType      `json:"order_type"`
+	Direction   TradeDirection `json:"direction"`
+	BaseQty     string         `json:"base_qty"`
+	QuotePrice  string         `json:"quote_price"`
+	Time        int64          `json:"time"`
 }
 
 // CurrencyPair represents a pair of cryptocurrency coins/tokens that can be traded in crypto exchanges.
@@ -21,9 +34,14 @@ type CurrencyPair struct {
 	QuoteCurrency string `json:"quote_currency"`
 }
 
+// SimpleName returns the currency pair name without separator, for example: ETHBTC, BNBUSDT
+func (pair CurrencyPair) SimpleName() string {
+	return pair.BaseCurrency + pair.QuoteCurrency
+}
+
 // Asset represents a cryptocurrency or token that is present in the exchange wallet
 type Asset struct {
-	Name         string `json:"name"`
-	Amount       string `json:"amount"`
-	LockedAmount string `json:"locked_amount"`
+	Name      string `json:"name"`
+	FreeQty   string `json:"free_qty"`
+	LockedQty string `json:"locked_qty"`
 }
