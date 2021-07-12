@@ -1,4 +1,4 @@
-module github.com/cryptoapi
+module github.com/grinply/cryptoapi
 
 go 1.16
 
