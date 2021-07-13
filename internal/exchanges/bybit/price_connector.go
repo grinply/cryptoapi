@@ -3,7 +3,7 @@ package bybit
 import (
 	"fmt"
 
-	"github.com/cryptoapi/trade"
+	"github.com/grinply/cryptoapi/trade"
 )
 
 type BybitPriceConnector struct {

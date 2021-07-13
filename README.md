@@ -9,7 +9,7 @@
 
 # Usage
 
-First you need to install the **cryptoapi** in your golang project, run `go get github.com/grinply/cryptoapi` to add the dependency.
+First you need to install the **CryptoAPI** in your golang project, run `go get github.com/grinply/cryptoapi` to add the dependency.
 
 The CryptoAPI provides **2 interfaces** that abstracts access to exchanges. [**OrderConnector**]((trade/order_connector.go)) allows users to execute [**orders**](https://www.tradingpedia.com/bitcoin-guide/what-types-of-orders-to-trade-bitcoin-on-crypto-exchanges-are-there/) and access private information _(such as asset balances)_:
 
@@ -41,7 +41,8 @@ type PriceConnector interface {
 
 	GetTradingRule(tradingPair CurrencyPair) (*Rule, error)
 
-	GetCandles(tradingPair CurrencyPair, qty int, interval CandleInterval) ([]CandleStick, error)
+	GetCandles(tradingPair CurrencyPair, qty int, interval CandleInterval) 
+        ([]CandleStick, error)
 
 	GetPriceFeed(tradingPair CurrencyPair) <-chan CandleStick
 }
@@ -59,16 +60,21 @@ func main(){
     priceConnector, err := cryptoapi.GetPriceConnector(exchangeName)
 
     if err != nil {
-        panic("coul't generate a price connector")
-    }
+        fmt.Println("could not generate a priceConnector")
+        return
+    }  
 
+    var apiKey = "my_api_key"
+    var secretKey = "my_secret_key"
+    var isTestNet = false
 
-    orderConnector, err := cryptoapi.GetOrderConnector(exchangeName, apiKey, secretKey string, isTestnet bool) 
+    orderConnector, err := cryptoapi.GetOrderConnector(exchangeName, apiKey, secretKey, isTestNet) 
     if err != nil {
-        panic("coul't generate a order connector")
+        fmt.Println("could not generate a orderConnector")
+        return
     }
 }
 ```
 
-[_Check here a list of examples for general usage_]()
+[_Check here a list of examples for general CryptoAPI usage](docs/)
 

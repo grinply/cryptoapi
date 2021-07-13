@@ -6,8 +6,9 @@ import (
 	"strconv"
 
 	"github.com/adshao/go-binance/v2"
-	"github.com/cryptoapi/internal/hash"
-	"github.com/cryptoapi/trade"
+	"github.com/grinply/cryptoapi/internal/hash"
+	"github.com/grinply/cryptoapi/trade"
+	"github.com/shopspring/decimal"
 )
 
 type BinanceConnector struct {
@@ -39,11 +40,16 @@ func (conn *BinanceConnector) GetWalletBalances() ([]trade.Asset, error) {
 	var balances = make([]trade.Asset, 0, len(res.Balances))
 
 	for _, asset := range res.Balances {
-		balances = append(balances, trade.Asset{
-			Name:      asset.Asset,
-			FreeQty:   asset.Free,
-			LockedQty: asset.Locked,
-		})
+		freeAmount, _ := decimal.NewFromString(asset.Free)
+		lockedAmount, _ := decimal.NewFromString(asset.Locked)
+
+		if freeAmount.GreaterThan(decimal.Zero) || lockedAmount.GreaterThan(decimal.Zero) {
+			balances = append(balances, trade.Asset{
+				Name:      asset.Asset,
+				FreeQty:   asset.Free,
+				LockedQty: asset.Locked,
+			})
+		}
 	}
 	return balances, nil
 }
