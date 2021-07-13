@@ -76,5 +76,5 @@ func main(){
 }
 ```
 
-[_Check here a list of examples for general CryptoAPI usage]()
+[_Check here a list of examples for general CryptoAPI usage](docs/)
 

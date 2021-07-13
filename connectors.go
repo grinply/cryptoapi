@@ -29,3 +29,7 @@ func GetOrderConnector(exchangeName, apiKey, secretKey string, isTestnet bool) (
 		return nil, fmt.Errorf("could't find a connector for the provided exchange %s", exchangeName)
 	}
 }
+
+func GetOrderConnector(exchangeName, apiKey, secretKey string, isTestnet bool) (trade.OrderConnector, error) {
+	return nil, fmt.Errorf("NOT IMPLEMENTED")
+}
