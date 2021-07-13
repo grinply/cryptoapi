@@ -81,4 +81,3 @@ func main() {
 ```
 
 [_Check here a list of **examples** for general CryptoAPI usage_](docs/)
-
