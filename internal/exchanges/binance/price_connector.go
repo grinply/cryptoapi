@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/adshao/go-binance/v2"
-	"github.com/grinply/cryptoapi/trade"
+	"github.com/grinply/cryptoapi/pkg/trade"
 )
 
 const (
@@ -21,7 +21,11 @@ type BinancePriceConnector struct {
 }
 
 func NewPriceConnector() *BinancePriceConnector {
-	return nil
+	var connector = &BinancePriceConnector{
+		client: binance.NewClient("", ""),
+	}
+	connector.timeOffset, _ = connector.client.NewSetServerTimeService().Do(context.Background())
+	return connector
 }
 
 func (conn *BinancePriceConnector) GetLatestPrice(tradingPair trade.CurrencyPair) (string, error) {
@@ -32,7 +36,7 @@ func (conn *BinancePriceConnector) GetTradingRule(tradingPair trade.CurrencyPair
 	return nil, fmt.Errorf("NOT IMPLEMENTED")
 }
 
-func (conn *BinancePriceConnector) GetCandles(tradingPair trade.CurrencyPair, qty int, interval trade.CandleInterval) ([]trade.CandleStick, error) {
+func (conn *BinancePriceConnector) GetCandles(tradingPair trade.CurrencyPair, qty int, interval trade.CandleTime) ([]trade.CandleStick, error) {
 	var currentTime = time.Now().Unix()*1e3 - conn.timeOffset
 	var priceCandles = make([]trade.CandleStick, 0, qty)
 
@@ -50,7 +54,7 @@ func (conn *BinancePriceConnector) GetPriceFeed(tradingPair trade.CurrencyPair) 
 	return nil
 }
 
-func (conn *BinancePriceConnector) GetCandlesInRange(pair trade.CurrencyPair, interval trade.CandleInterval, startTime, endTime int64) ([]trade.CandleStick, error) {
+func (conn *BinancePriceConnector) GetCandlesInRange(pair trade.CurrencyPair, interval trade.CandleTime, startTime, endTime int64) ([]trade.CandleStick, error) {
 	klines, err := conn.client.NewKlinesService().Symbol(pair.SimpleName()).
 		Interval(interval.Description()).StartTime(startTime).EndTime(endTime).Do(context.Background())
 

@@ -3,7 +3,7 @@ package bitfinex
 import (
 	"fmt"
 
-	"github.com/grinply/cryptoapi/trade"
+	"github.com/grinply/cryptoapi/pkg/trade"
 )
 
 type BitfinexPriceConnector struct {
@@ -21,7 +21,7 @@ func (conn *BitfinexPriceConnector) GetTradingRule(tradingPair trade.CurrencyPai
 	return nil, fmt.Errorf("NOT IMPLEMENTED")
 }
 
-func (conn *BitfinexPriceConnector) GetCandles(tradingPair trade.CurrencyPair, qty int, interval trade.CandleInterval) ([]trade.CandleStick, error) {
+func (conn *BitfinexPriceConnector) GetCandles(tradingPair trade.CurrencyPair, qty int, interval trade.CandleTime) ([]trade.CandleStick, error) {
 	return nil, fmt.Errorf("NOT IMPLEMENTED")
 }
 

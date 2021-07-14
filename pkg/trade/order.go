@@ -1,8 +1,14 @@
 package trade
 
+import (
+	"fmt"
+	"strings"
+)
+
 const (
 	LIMIT  OrderType = "LIMIT"
 	MARKET OrderType = "MARKET"
+	OCO    OrderType = "OCO"
 
 	BUY  TradeDirection = "BUY"
 	SELL TradeDirection = "SELL"
@@ -25,6 +31,18 @@ type Order struct {
 	BaseQty     string         `json:"base_qty"`
 	QuotePrice  string         `json:"quote_price"`
 	Time        int64          `json:"time"`
+}
+
+// Pair creates a CurrencyPair from a description in the format: BTC/USDT
+func Pair(pairDescription string) (CurrencyPair, error) {
+	if !strings.Contains(pairDescription, "/") {
+		return CurrencyPair{}, fmt.Errorf("the currency pair description must contain a '/' to indicate the separation between base and quote currencies")
+	}
+	pair := strings.Split(pairDescription, "/")
+	return CurrencyPair{
+		BaseCurrency:  pair[0],
+		QuoteCurrency: pair[1],
+	}, nil
 }
 
 // CurrencyPair represents a pair of cryptocurrency coins/tokens that can be traded in crypto exchanges.

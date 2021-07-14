@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/grinply/cryptoapi/internal/exchanges/binance"
-	"github.com/grinply/cryptoapi/trade"
+	"github.com/grinply/cryptoapi/pkg/trade"
 )
 
 // GetPriceConnector creates a connector that can retrieve pricing information for the specified cryptocurrency exchange
