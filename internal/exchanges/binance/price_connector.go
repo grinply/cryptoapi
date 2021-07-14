@@ -1,12 +1,23 @@
 package binance
 
 import (
+	"context"
 	"fmt"
+	"strconv"
+	"time"
 
+	"github.com/adshao/go-binance/v2"
 	"github.com/grinply/cryptoapi/trade"
 )
 
+const (
+	candles_per_request int64 = 500
+	minute_in_ms        int64 = 60 * 1e3
+)
+
 type BinancePriceConnector struct {
+	timeOffset int64
+	client     *binance.Client
 }
 
 func NewPriceConnector() *BinancePriceConnector {
@@ -22,9 +33,45 @@ func (conn *BinancePriceConnector) GetTradingRule(tradingPair trade.CurrencyPair
 }
 
 func (conn *BinancePriceConnector) GetCandles(tradingPair trade.CurrencyPair, qty int, interval trade.CandleInterval) ([]trade.CandleStick, error) {
-	return nil, fmt.Errorf("NOT IMPLEMENTED")
+	var currentTime = time.Now().Unix()*1e3 - conn.timeOffset
+	var priceCandles = make([]trade.CandleStick, 0, qty)
+
+	for i := qty; i > 0; i -= int(candles_per_request) {
+		var startCandles = currentTime - int64(i)*interval.Minutes()*minute_in_ms
+		var endCandles = startCandles + interval.Minutes()*minute_in_ms*candles_per_request
+		var candles, _ = conn.GetCandlesInRange(tradingPair, interval, startCandles, endCandles)
+		priceCandles = append(priceCandles, candles...)
+	}
+
+	return priceCandles, nil
 }
 
 func (conn *BinancePriceConnector) GetPriceFeed(tradingPair trade.CurrencyPair) <-chan trade.CandleStick {
 	return nil
+}
+
+func (conn *BinancePriceConnector) GetCandlesInRange(pair trade.CurrencyPair, interval trade.CandleInterval, startTime, endTime int64) ([]trade.CandleStick, error) {
+	klines, err := conn.client.NewKlinesService().Symbol(pair.SimpleName()).
+		Interval(interval.Description()).StartTime(startTime).EndTime(endTime).Do(context.Background())
+
+	var candles = make([]trade.CandleStick, 0, len(klines))
+
+	if err != nil {
+		return []trade.CandleStick{}, err
+	}
+
+	for i, kline := range klines {
+		candles = append(candles, trade.CandleStick{
+			TradingPair: pair,
+			StartTime:   strconv.Itoa(int(startTime) + i*int(interval.Minutes()*minute_in_ms)),
+			Open:        kline.Open,
+			High:        kline.High,
+			Low:         kline.Low,
+			Close:       kline.Close,
+			Volume:      kline.Volume,
+			IsClosed:    true,
+		})
+	}
+
+	return candles, nil
 }

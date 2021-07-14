@@ -20,9 +20,58 @@ type CandleStick struct {
 }
 
 type CandleInterval struct {
-	description string
-	minutes     int
+	description string //description of the interval = [1m, 3m, 5m, 15m, 30m, 1h, 4h, 1D]
+	minutes     int64
 }
+
+// Minutes returns the amount of minutes in this interval
+func (interval CandleInterval) Minutes() int64 {
+	return interval.minutes
+}
+
+// Description returns the string containing a tag description for the candle Interval
+// examples: 1m, 3m, 5m, 15m, 30m, 1h, 4h, 12h, 1D
+func (interval CandleInterval) Description() string {
+	return interval.description
+}
+
+var (
+	// OneMinute represents the 1 minute interval between between candlestick with price information
+	// candlesticks with interval one minute will agregate all prices in this timeframe
+	OneMinute CandleInterval = CandleInterval{description: "1m", minutes: 1}
+
+	// OneMinute represents the 3 minutes interval between between candlestick with price information
+	// candlesticks with interval one minute will agregate all prices in this timeframe
+	ThreeMinutes CandleInterval = CandleInterval{description: "3m", minutes: 3}
+
+	// OneMinute represents the 5 minutes interval between between candlestick with price information
+	// candlesticks with interval one minute will agregate all prices in this timeframe
+	FiveMinutes CandleInterval = CandleInterval{description: "5m", minutes: 5}
+
+	// OneMinute represents the 15 minutes interval between between candlestick with price information
+	// candlesticks with interval one minute will agregate all prices in this timeframe
+	FifteenMinutes CandleInterval = CandleInterval{description: "15m", minutes: 15}
+
+	// OneMinute represents the 30 minutes interval between between candlestick with price information
+	// candlesticks with interval one minute will agregate all prices in this timeframe
+	ThirtyMinutes CandleInterval = CandleInterval{description: "30m", minutes: 30}
+
+	// OneMinute represents the 1 hour interval between between candlestick with price information
+	// candlesticks with interval one minute will agregate all prices in this timeframe
+	OneHour CandleInterval = CandleInterval{description: "1h", minutes: 60}
+
+	// OneMinute represents the 4 hour interval between between candlestick with price information
+	// candlesticks with interval one minute will agregate all prices in this timeframe
+	FourHours CandleInterval = CandleInterval{description: "4h", minutes: 240}
+
+	// OneMinute represents the 12 hour interval between between candlestick with price information
+	// candlesticks with interval one minute will agregate all prices in this timeframe
+	TwelveHours CandleInterval = CandleInterval{description: "12h", minutes: 720}
+
+	// OneDay represents the 1 day interval between between candlestick with price information
+	// candlesticks with interval one minute will agregate all prices in this timeframe
+	OneDay CandleInterval = CandleInterval{description: "1D", minutes: 1440}
+)
 
 type Rule struct {
 	TradingPair         CurrencyPair
