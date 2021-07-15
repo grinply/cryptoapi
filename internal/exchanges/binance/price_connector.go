@@ -16,6 +16,8 @@ const (
 	minute_in_ms        int64 = 60 * 1e3
 )
 
+var savedExchangeRules map[string]trade.Rule
+
 type BinancePriceConnector struct {
 	timeOffset int64
 	client     *binance.Client
@@ -39,7 +41,34 @@ func (conn *BinancePriceConnector) GetLatestPrice(tradingPair trade.CurrencyPair
 }
 
 func (conn *BinancePriceConnector) GetTradingRule(tradingPair trade.CurrencyPair) (*trade.Rule, error) {
-	return nil, fmt.Errorf("NOT IMPLEMENTED")
+	if rule, ok := savedExchangeRules[tradingPair.SimpleName()]; ok {
+		return &rule, nil
+	} else if len(savedExchangeRules) > 0 {
+		return nil, fmt.Errorf("the exchange didn't provide a rule for the desired trading pair %v, check if the name is correct",
+			tradingPair.Description())
+	}
+
+	exchangeInfo, err := conn.client.NewExchangeInfoService().Do(context.Background())
+	if err != nil {
+		return nil, fmt.Errorf("failed to retrieve exchange information with trade rules, %v", err.Error())
+	}
+
+	for _, exchangeRule := range exchangeInfo.Symbols {
+		pair, _ := trade.Pair(exchangeRule.BaseAsset + "/" + exchangeRule.QuoteAsset)
+		newRule := trade.Rule{
+			TradingPair:         pair,
+			BaseAssetPrecision:  exchangeRule.BaseAssetPrecision,
+			QuoteAssetPrecision: exchangeRule.QuotePrecision,
+			MaxOrderQty:         200,
+			MinPriceMovement:    exchangeRule.PriceFilter().TickSize,
+			BaseStepSize:        exchangeRule.LotSizeFilter().StepSize,
+			MinLotSize:          exchangeRule.LotSizeFilter().MinQuantity,
+			MinNotionalValue:    exchangeRule.MinNotionalFilter().MinNotional,
+		}
+		savedExchangeRules[pair.SimpleName()] = newRule
+	}
+
+	return conn.GetTradingRule(tradingPair)
 }
 
 func (conn *BinancePriceConnector) GetCandles(tradingPair trade.CurrencyPair, qty int, interval trade.CandleTime) ([]trade.CandleStick, error) {
