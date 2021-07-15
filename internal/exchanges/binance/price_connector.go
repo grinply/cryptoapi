@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/adshao/go-binance/v2"
+	"github.com/grinply/cryptoapi/pkg/interval"
 	"github.com/grinply/cryptoapi/pkg/trade"
 )
 
@@ -29,7 +30,12 @@ func NewPriceConnector() *BinancePriceConnector {
 }
 
 func (conn *BinancePriceConnector) GetLatestPrice(tradingPair trade.CurrencyPair) (string, error) {
-	return "", fmt.Errorf("NOT IMPLEMENTED")
+	candles, err := conn.GetCandles(tradingPair, 2, interval.OneMinute)
+	if err != nil {
+		return "", err
+	}
+
+	return candles[len(candles)-1].Close, nil
 }
 
 func (conn *BinancePriceConnector) GetTradingRule(tradingPair trade.CurrencyPair) (*trade.Rule, error) {

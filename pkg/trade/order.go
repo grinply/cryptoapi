@@ -57,6 +57,10 @@ func (pair CurrencyPair) SimpleName() string {
 	return pair.BaseCurrency + pair.QuoteCurrency
 }
 
+func (pair CurrencyPair) Description() string {
+	return fmt.Sprintf("%s/%s", pair.BaseCurrency, pair.QuoteCurrency)
+}
+
 // Asset represents a cryptocurrency or token that is present in the exchange wallet
 type Asset struct {
 	Name      string `json:"name"`
