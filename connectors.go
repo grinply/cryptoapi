@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/grinply/cryptoapi/internal/exchanges/binance"
-	"github.com/grinply/cryptoapi/trade"
+	"github.com/grinply/cryptoapi/pkg/trade"
 )
 
 // GetPriceConnector creates a connector that can retrieve pricing information for the specified cryptocurrency exchange
@@ -15,7 +15,7 @@ func GetPriceConnector(exchangeName string) (trade.PriceConnector, error) {
 	case "binance":
 		return binance.NewPriceConnector(), nil
 	default:
-		return nil, fmt.Errorf("could't find a connector for the provided exchange %s", exchangeName)
+		return nil, fmt.Errorf("could't find a price connector for the provided exchange %s", exchangeName)
 	}
 }
 
@@ -26,10 +26,6 @@ func GetOrderConnector(exchangeName, apiKey, secretKey string, isTestnet bool) (
 	case "binance":
 		return binance.NewOrderConnector(apiKey, secretKey, isTestnet), nil
 	default:
-		return nil, fmt.Errorf("could't find a connector for the provided exchange %s", exchangeName)
+		return nil, fmt.Errorf("could't find a order connector for the provided exchange %s", exchangeName)
 	}
-}
-
-func GetOrderConnector(exchangeName, apiKey, secretKey string, isTestnet bool) (trade.OrderConnector, error) {
-	return nil, fmt.Errorf("NOT IMPLEMENTED")
 }

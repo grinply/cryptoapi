@@ -3,7 +3,7 @@ package bybit
 import (
 	"fmt"
 
-	"github.com/grinply/cryptoapi/trade"
+	"github.com/grinply/cryptoapi/pkg/trade"
 )
 
 type BybitPriceConnector struct {
@@ -21,7 +21,7 @@ func (conn *BybitPriceConnector) GetTradingRule(tradingPair trade.CurrencyPair) 
 	return nil, fmt.Errorf("NOT IMPLEMENTED")
 }
 
-func (conn *BybitPriceConnector) GetCandles(tradingPair trade.CurrencyPair, qty int, interval trade.CandleInterval) ([]trade.CandleStick, error) {
+func (conn *BybitPriceConnector) GetCandles(tradingPair trade.CurrencyPair, qty int, interval trade.CandleTime) ([]trade.CandleStick, error) {
 	return nil, fmt.Errorf("NOT IMPLEMENTED")
 }
 

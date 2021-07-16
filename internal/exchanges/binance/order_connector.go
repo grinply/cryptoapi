@@ -7,7 +7,7 @@ import (
 
 	"github.com/adshao/go-binance/v2"
 	"github.com/grinply/cryptoapi/internal/hash"
-	"github.com/grinply/cryptoapi/trade"
+	"github.com/grinply/cryptoapi/pkg/trade"
 	"github.com/shopspring/decimal"
 )
 

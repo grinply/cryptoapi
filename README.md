@@ -9,9 +9,9 @@
 
 # Usage
 
-First you need to install the **CryptoAPI** in your golang project, run `go get github.com/grinply/cryptoapi` to add the dependency.
+First you need to install the **CryptoAPI** in your project, run `go get github.com/grinply/cryptoapi` to add the dependency.
 
-The CryptoAPI provides **2 interfaces** that abstracts access to exchanges. [**OrderConnector**]((trade/order_connector.go)) allows users to execute [**orders**](https://www.tradingpedia.com/bitcoin-guide/what-types-of-orders-to-trade-bitcoin-on-crypto-exchanges-are-there/) and access private information _(such as asset balances)_:
+Two main interfaces are provided with abstractions to access exchanges. [**OrderConnector**]((trade/order_connector.go)) allows users to execute [**orders**](https://www.tradingpedia.com/bitcoin-guide/what-types-of-orders-to-trade-bitcoin-on-crypto-exchanges-are-there/) and access private information _(such as asset balances)_:
 
 ```go
 package trade
@@ -53,28 +53,31 @@ To make use of both connectors you just need to provide the required information
 ```go
 package main
 
-import "github.com/cryptoapi"
+import (
+	"fmt"
+	"github.com/grinply/cryptoapi"
+)
 
-func main(){
-    var exchangeName = "binance"
-    priceConnector, err := cryptoapi.GetPriceConnector(exchangeName)
-
-    if err != nil {
-        fmt.Println("could not generate a priceConnector")
-        return
-    }  
-
+func main() {
+    //replace the keys  with your own values.
     var apiKey = "my_api_key"
     var secretKey = "my_secret_key"
-    var isTestNet = false
+    var exchange = "binance"
 
-    orderConnector, err := cryptoapi.GetOrderConnector(exchangeName, apiKey, secretKey, isTestNet) 
-    if err != nil {
-        fmt.Println("could not generate a orderConnector")
-        return
-    }
+	connector, err := cryptoapi.GetOrderConnector(exchange, apiKey, secretKey, false)
+
+	if err != nil {
+		fmt.Printf("Failed to create a connector for the binance exchange with the provided credentials. %v\n", err.Error())
+		return
+	}
+
+	//Print the amount of each asset present in the exchange wallet
+	if assetsBalance, err := connector.GetWalletBalances(); err == nil {
+		for _, asset := range assetsBalance {
+			fmt.Printf("%s - available: %s | locked: %s\n", asset.Name, asset.FreeQty, asset.LockedQty)
+		}
+	}
 }
 ```
 
-[_Check here a list of examples for general CryptoAPI usage](docs/)
-
+[_Check here a list of **examples** for general CryptoAPI usage_](docs/)
