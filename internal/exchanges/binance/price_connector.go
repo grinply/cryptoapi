@@ -53,6 +53,8 @@ func (conn *BinancePriceConnector) GetTradingRule(tradingPair trade.CurrencyPair
 		return nil, fmt.Errorf("failed to retrieve exchange information with trade rules, %v", err.Error())
 	}
 
+	savedExchangeRules = make(map[string]trade.Rule)
+
 	for _, exchangeRule := range exchangeInfo.Symbols {
 		pair, _ := trade.Pair(exchangeRule.BaseAsset + "/" + exchangeRule.QuoteAsset)
 		newRule := trade.Rule{
