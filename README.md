@@ -3,7 +3,7 @@
 [![Go Reference](https://pkg.go.dev/badge/github.com/grinply/cryptoapi.svg)](https://pkg.go.dev/github.com/victorl2/kate-backtester)
 # CryptoAPI
 
-**CryptoAPI** is a interface in Golang that aims to abstract the connection with the [**biggest cryptocurrency exchanges by Volume**](https://coinmarketcap.com/rankings/exchanges/). The API supports both **spot** and **derivative** markets. 
+**CryptoAPI** is a interface in Golang that aims to abstract the connection with [cryptocurrency exchanges](https://coinmarketcap.com/rankings/exchanges/). The API supports both **spot** and **derivative** markets. 
 
 
 
