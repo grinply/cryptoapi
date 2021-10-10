@@ -1,8 +1,14 @@
 package trade
 
+import (
+	"fmt"
+	"strings"
+)
+
 const (
 	LIMIT  OrderType = "LIMIT"
 	MARKET OrderType = "MARKET"
+	OCO    OrderType = "OCO"
 
 	BUY  TradeDirection = "BUY"
 	SELL TradeDirection = "SELL"
@@ -27,6 +33,18 @@ type Order struct {
 	Time        int64          `json:"time"`
 }
 
+// Pair creates a CurrencyPair from a description in the format: BTC/USDT
+func Pair(pairDescription string) (CurrencyPair, error) {
+	if !strings.Contains(pairDescription, "/") {
+		return CurrencyPair{}, fmt.Errorf("the currency pair description must contain a '/' to indicate the separation between base and quote currencies")
+	}
+	pair := strings.Split(pairDescription, "/")
+	return CurrencyPair{
+		BaseCurrency:  pair[0],
+		QuoteCurrency: pair[1],
+	}, nil
+}
+
 // CurrencyPair represents a pair of cryptocurrency coins/tokens that can be traded in crypto exchanges.
 // example: ETH/BTC, ADA/ETH
 type CurrencyPair struct {
@@ -37,6 +55,10 @@ type CurrencyPair struct {
 // SimpleName returns the currency pair name without separator, for example: ETHBTC, BNBUSDT
 func (pair CurrencyPair) SimpleName() string {
 	return pair.BaseCurrency + pair.QuoteCurrency
+}
+
+func (pair CurrencyPair) Description() string {
+	return fmt.Sprintf("%s/%s", pair.BaseCurrency, pair.QuoteCurrency)
 }
 
 // Asset represents a cryptocurrency or token that is present in the exchange wallet

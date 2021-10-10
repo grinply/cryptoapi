@@ -3,7 +3,7 @@ package okex
 import (
 	"fmt"
 
-	"github.com/cryptoapi/trade"
+	"github.com/grinply/cryptoapi/pkg/trade"
 )
 
 type OkexConnector struct{}

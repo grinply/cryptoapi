@@ -3,7 +3,7 @@ package coinbase
 import (
 	"fmt"
 
-	"github.com/cryptoapi/trade"
+	"github.com/grinply/cryptoapi/pkg/trade"
 )
 
 type CoinbaseConnector struct{}

@@ -3,7 +3,7 @@ package ftx
 import (
 	"fmt"
 
-	"github.com/cryptoapi/trade"
+	"github.com/grinply/cryptoapi/pkg/trade"
 )
 
 type FTXPriceConnector struct {
@@ -21,7 +21,7 @@ func (conn *FTXPriceConnector) GetTradingRule(tradingPair trade.CurrencyPair) (*
 	return nil, fmt.Errorf("NOT IMPLEMENTED")
 }
 
-func (conn *FTXPriceConnector) GetCandles(tradingPair trade.CurrencyPair, qty int, interval trade.CandleInterval) ([]trade.CandleStick, error) {
+func (conn *FTXPriceConnector) GetCandles(tradingPair trade.CurrencyPair, qty int, interval trade.CandleTime) ([]trade.CandleStick, error) {
 	return nil, fmt.Errorf("NOT IMPLEMENTED")
 }
 

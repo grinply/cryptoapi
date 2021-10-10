@@ -3,7 +3,7 @@ package coinbase
 import (
 	"fmt"
 
-	"github.com/cryptoapi/trade"
+	"github.com/grinply/cryptoapi/pkg/trade"
 )
 
 type CoinbasePriceConnector struct {
@@ -21,7 +21,7 @@ func (conn *CoinbasePriceConnector) GetTradingRule(tradingPair trade.CurrencyPai
 	return nil, fmt.Errorf("NOT IMPLEMENTED")
 }
 
-func (conn *CoinbasePriceConnector) GetCandles(tradingPair trade.CurrencyPair, qty int, interval trade.CandleInterval) ([]trade.CandleStick, error) {
+func (conn *CoinbasePriceConnector) GetCandles(tradingPair trade.CurrencyPair, qty int, interval trade.CandleTime) ([]trade.CandleStick, error) {
 	return nil, fmt.Errorf("NOT IMPLEMENTED")
 }
 

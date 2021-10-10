@@ -19,15 +19,11 @@ type CandleStick struct {
 	IsClosed    bool   `json:"is_closed"`
 }
 
-type CandleInterval struct {
-	description string
-	minutes     int
-}
-
+// Rule is a description of requirements that exchanges impose in order to trade a given currency pair
 type Rule struct {
 	TradingPair         CurrencyPair
-	BaseAssetPrecision  int32
-	QuoteAssetPrecision int32
+	BaseAssetPrecision  int
+	QuoteAssetPrecision int
 	MaxOrderQty         int    // maximum amount of orders that can be present in the exchange orderbook simultaneously
 	MinPriceMovement    string // the minimum price variation that can occur in the trading pair
 	BaseStepSize        string // defines the step multiplier that can be applied for the trading pair, any amount of base currency MUST be a multiple of this value

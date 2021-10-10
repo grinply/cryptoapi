@@ -2,33 +2,30 @@ package cryptoapi
 
 import (
 	"fmt"
+	"strings"
 
-	"github.com/cryptoapi/internal/exchanges/binance"
-	"github.com/cryptoapi/internal/exchanges/bybit"
-	"github.com/cryptoapi/internal/exchanges/coinbase"
-	"github.com/cryptoapi/internal/exchanges/ftx"
-	"github.com/cryptoapi/internal/exchanges/kucoin"
-	"github.com/cryptoapi/internal/exchanges/okex"
-	"github.com/cryptoapi/trade"
+	"github.com/grinply/cryptoapi/internal/exchanges/binance"
+	"github.com/grinply/cryptoapi/pkg/trade"
 )
 
-// GetPriceConnector creates a connector that can retrieve pricing information from cryptocurrency exchanges
-// a not nil error indicates that the requested exchange is not available
+// GetPriceConnector creates a connector that can retrieve pricing information for the specified cryptocurrency exchange
+// a not nil error indicates that a connector for the exchange is not available
 func GetPriceConnector(exchangeName string) (trade.PriceConnector, error) {
-	switch exchangeName {
+	switch strings.ToLower(exchangeName) {
 	case "binance":
 		return binance.NewPriceConnector(), nil
-	case "bybit":
-		return bybit.NewPriceConnector(), nil
-	case "okex":
-		return okex.NewPriceConnector(), nil
-	case "ftx":
-		return ftx.NewPriceConnector(), nil
-	case "coinbase":
-		return coinbase.NewPriceConnector(), nil
-	case "kucoin":
-		return kucoin.NewPriceConnector(), nil
 	default:
-		return nil, fmt.Errorf("could't find a connector for the provided exchange %s", exchangeName)
+		return nil, fmt.Errorf("could't find a price connector for the provided exchange %s", exchangeName)
+	}
+}
+
+// GetOrderConnector creates a connector that can execute orders and access private information for the specified cryptocurrency exchange
+// a not nil error indicates wrong authentication information or that a connector for the exchange is not available
+func GetOrderConnector(exchangeName, apiKey, secretKey string, isTestnet bool) (trade.OrderConnector, error) {
+	switch strings.ToLower(exchangeName) {
+	case "binance":
+		return binance.NewOrderConnector(apiKey, secretKey, isTestnet), nil
+	default:
+		return nil, fmt.Errorf("could't find a order connector for the provided exchange %s", exchangeName)
 	}
 }

@@ -3,7 +3,7 @@ package okex
 import (
 	"fmt"
 
-	"github.com/cryptoapi/trade"
+	"github.com/grinply/cryptoapi/pkg/trade"
 )
 
 type OkexPriceConnector struct {
@@ -21,7 +21,7 @@ func (conn *OkexPriceConnector) GetTradingRule(tradingPair trade.CurrencyPair) (
 	return nil, fmt.Errorf("NOT IMPLEMENTED")
 }
 
-func (conn *OkexPriceConnector) GetCandles(tradingPair trade.CurrencyPair, qty int, interval trade.CandleInterval) ([]trade.CandleStick, error) {
+func (conn *OkexPriceConnector) GetCandles(tradingPair trade.CurrencyPair, qty int, interval trade.CandleTime) ([]trade.CandleStick, error) {
 	return nil, fmt.Errorf("NOT IMPLEMENTED")
 }
 

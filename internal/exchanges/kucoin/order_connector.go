@@ -3,7 +3,7 @@ package kucoin
 import (
 	"fmt"
 
-	"github.com/cryptoapi/trade"
+	"github.com/grinply/cryptoapi/pkg/trade"
 )
 
 type KuCoinConnector struct{}

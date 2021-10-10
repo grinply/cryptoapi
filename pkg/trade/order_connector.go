@@ -7,7 +7,9 @@ package trade
 // Note: all the communication using the OrderConnector is for single user only, it is required to authenticated providing api keys.
 type OrderConnector interface {
 
-	// GetWalletBalances checks the balance amount for every crypcurrency/token in the user exchange wallet
+	// GetWalletBalances return the balance amount for every crypcurrency/token in the user exchange wallet
+	// the function only returns assets that have a non-zero amount in either free or locked amount
+	// NOTE: orders placed in the orderbook are not counted in either free or locked amount
 	GetWalletBalances() ([]Asset, error)
 
 	// GetOrderByID returns all the information about a order that contains the provided ID
