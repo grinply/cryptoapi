@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	priceConnector, err := cryptoapi.GetPriceConnector("binance")
+	infoConnector, err := cryptoapi.GetInfoConnector("binance")
 
 	if err != nil {
 		fmt.Printf("Failed to create a connector for the binance exchange with the provided credentials. %v\n", err.Error())
@@ -17,7 +17,7 @@ func main() {
 	// Defining the trading pair that will be used
 	var tradingPair, _ = trade.Pair("ADA/ETH")
 
-	rule, err := priceConnector.GetTradingRule(tradingPair)
+	rule, err := infoConnector.GetTradingRule(tradingPair)
 
 	if err != nil {
 		fmt.Printf("Failed to retrieve the trading rule for the trading pair %s, %v\n", tradingPair.SimpleName(), err.Error())

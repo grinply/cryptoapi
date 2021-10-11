@@ -8,6 +8,15 @@ import (
 	"github.com/grinply/cryptoapi/pkg/trade"
 )
 
+func GetInfoConnector(exchangeName string) (trade.InfoConnector, error) {
+	switch strings.ToLower(exchangeName) {
+	case "binance":
+		return binance.NewBinanceInfoConnector(), nil
+	default:
+		return nil, fmt.Errorf("exchange %s not supported", exchangeName)
+	}
+}
+
 // GetPriceConnector creates a connector that can retrieve pricing information for the specified cryptocurrency exchange
 // a not nil error indicates that a connector for the exchange is not available
 func GetPriceConnector(exchangeName string) (trade.PriceConnector, error) {

@@ -11,23 +11,21 @@
 
 First you need to install the **CryptoAPI** in your project, run `go get github.com/grinply/cryptoapi` to add the dependency.
 
-Two main interfaces are provided with abstractions to access exchanges. [**OrderConnector**]((trade/order_connector.go)) allows users to execute [**orders**](https://www.tradingpedia.com/bitcoin-guide/what-types-of-orders-to-trade-bitcoin-on-crypto-exchanges-are-there/) and access private information _(such as asset balances)_:
+Three main interfaces are provided with abstractions to access exchanges in a unified way. [**OrderConnector**]((trade/order_connector.go)) allows users to execute [**orders**](https://www.tradingpedia.com/bitcoin-guide/what-types-of-orders-to-trade-bitcoin-on-crypto-exchanges-are-there/) and access private information _(such as asset balances)_:
 
 ```go
 package trade
 
 type OrderConnector interface {
-	GetWalletBalances() ([]Asset, error)
+	FindOrderByID(tradingPair CurrencyPair, orderID string) (Order, error)
 
-	GetOrderByID(tradingPair CurrencyPair, orderID string) (*Order, error)
+	OpenOrders(tradingPair CurrencyPair) ([]Order, error)
 
-	GetAllOpenOrders(tradingPair CurrencyPair) ([]Order, error)
-
-	OpenOrder(orderToOpen Order) (string, error)
+	NewOpenOrder(orderToOpen Order) (string, error)
 
 	CancelOrder(tradingPair CurrencyPair, orderID string) error
 
-	CancelAllOpenOrders(tradingPair CurrencyPair) error
+	CancelOpenOrders(tradingPair CurrencyPair) error
 }
 
 ```
@@ -37,14 +35,24 @@ The [**PriceConnector**](trade/price_connector.go) provides access to **price da
 ```go
 
 type PriceConnector interface {
-	GetLatestPrice(tradingPair CurrencyPair) (string, error)
+	LatestPrice(tradingPair CurrencyPair) (string, error)
 
-	GetTradingRule(tradingPair CurrencyPair) (*Rule, error)
-
-	GetCandles(tradingPair CurrencyPair, qty int, interval CandleInterval) 
+	Candles(tradingPair CurrencyPair, qty int, interval CandleInterval) 
         ([]CandleStick, error)
 
-	GetPriceFeed(tradingPair CurrencyPair) <-chan CandleStick
+	PriceFeed(tradingPair CurrencyPair) <-chan CandleStick
+}
+```
+
+The [**InfoConnector**](trade/info_connector.go) provides access to **general exchange information** about what is avaliable
+
+```go
+type InfoConnector interface {
+	TradingPairs() ([]CurrencyPair, error)
+
+	TradingRules(tradingPair CurrencyPair) (Rule, error)
+
+	CoinsBalance() ([]Asset, error)
 }
 ```
 
@@ -64,17 +72,18 @@ func main() {
     var secretKey = "my_secret_key"
     var exchange = "binance"
 
-	connector, err := cryptoapi.GetOrderConnector(exchange, apiKey, secretKey, false)
+	connector, err := cryptoapi.OrderConnector(exchange, apiKey, secretKey, false)
 
 	if err != nil {
-		fmt.Printf("Failed to create a connector for the binance exchange with the provided credentials. %v\n", err.Error())
+		fmt.Printf("Fail to create a connector with the provided credentials. %v\n", err.Error())
 		return
 	}
 
 	//Print the amount of each asset present in the exchange wallet
-	if assetsBalance, err := connector.GetWalletBalances(); err == nil {
+	if assetsBalance, err := connector.WalletBalances(); err == nil {
 		for _, asset := range assetsBalance {
-			fmt.Printf("%s - available: %s | locked: %s\n", asset.Name, asset.FreeQty, asset.LockedQty)
+			fmt.Printf("%s - available: %s | locked: %s\n", 
+				asset.Name, asset.FreeQty, asset.LockedQty)
 		}
 	}
 }
