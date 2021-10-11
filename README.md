@@ -11,7 +11,7 @@
 
 First you need to install the **CryptoAPI** in your project, run `go get github.com/grinply/cryptoapi` to add the dependency.
 
-Three main interfaces are provided with abstractions to access exchanges in a unified way. [**OrderConnector**]((trade/order_connector.go)) allows users to execute [**orders**](https://www.tradingpedia.com/bitcoin-guide/what-types-of-orders-to-trade-bitcoin-on-crypto-exchanges-are-there/) and access private information _(such as asset balances)_:
+Three main interfaces are provided with abstractions to access exchanges in a unified way. [**OrderConnector**](pkg/trade/order_connector.go) allows users to execute [**orders**](https://www.tradingpedia.com/bitcoin-guide/what-types-of-orders-to-trade-bitcoin-on-crypto-exchanges-are-there/) and access private information _(such as asset balances)_:
 
 ```go
 package trade
@@ -30,7 +30,7 @@ type OrderConnector interface {
 
 ```
 
-The [**PriceConnector**](trade/price_connector.go) provides access to **price data** without the need for authentication:
+The [**PriceConnector**](pkg/trade/price_connector.go) provides access to **price data** without the need for authentication:
 
 ```go
 
@@ -44,7 +44,7 @@ type PriceConnector interface {
 }
 ```
 
-The [**InfoConnector**](trade/info_connector.go) provides access to **general exchange information** about what is avaliable
+The [**InfoConnector**](pkg/trade/info_connector.go) provides access to **general exchange information** about what is avaliable
 
 ```go
 type InfoConnector interface {
@@ -75,7 +75,7 @@ func main() {
 	connector, err := cryptoapi.OrderConnector(exchange, apiKey, secretKey, false)
 
 	if err != nil {
-		fmt.Printf("Fail to create a connector with the provided credentials. %v\n", err.Error())
+		fmt.Printf("Connector failed with the provided credentials.%v\n", err.Error())
 		return
 	}
 
