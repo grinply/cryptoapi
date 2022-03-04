@@ -39,6 +39,16 @@ func (conn *BinanceInfoConnector) GetTradingPairs() ([]trade.CurrencyPair, error
 	return tradingPairs, nil
 }
 
+func (conn *BinancePriceConnector) GetLatestStats(tradingPair trade.CurrencyPair) (*binance.PriceChangeStats, error) {
+	stats, err := conn.client.NewListPriceChangeStatsService().Symbol(tradingPair.SimpleName()).Do(context.Background())
+
+	if err != nil {
+		return "", err
+	}
+
+	return stats[-1] //Validar se é o 0 ou o -1 o último status.
+}
+
 func (conn *BinanceInfoConnector) GetTradingRule(tradingPair trade.CurrencyPair) (*trade.Rule, error) {
 	if rule, ok := exchangeRules[tradingPair.SimpleName()]; ok {
 		return &rule, nil
@@ -74,4 +84,27 @@ func (conn *BinanceInfoConnector) loadExchangeRules() error {
 	}
 
 	return nil
+}
+
+func (conn *BinanceConnector) GetWalletBalances() ([]trade.Asset, error) {
+	res, err := conn.client.NewGetAccountService().Do(context.Background())
+	if err != nil {
+		return nil, err
+	}
+
+	var balances = make([]trade.Asset, 0, len(res.Balances))
+
+	for _, asset := range res.Balances {
+		freeAmount, _ := decimal.NewFromString(asset.Free)
+		lockedAmount, _ := decimal.NewFromString(asset.Locked)
+
+		if freeAmount.GreaterThan(decimal.Zero) || lockedAmount.GreaterThan(decimal.Zero) {
+			balances = append(balances, trade.Asset{
+				Name:      asset.Asset,
+				FreeQty:   asset.Free,
+				LockedQty: asset.Locked,
+			})
+		}
+	}
+	return balances, nil
 }

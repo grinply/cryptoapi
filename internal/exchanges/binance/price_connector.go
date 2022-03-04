@@ -20,21 +20,40 @@ type BinancePriceConnector struct {
 	client     *binance.Client
 }
 
-func NewPriceConnector() *BinancePriceConnector {
+func NewPriceConnector(apiKey, secretKey string, isTestnet bool) *BinancePriceConnector {
+	binance.UseTestnet = isTestnet
 	var connector = &BinancePriceConnector{
-		client: binance.NewClient("", ""),
+		apiKey:    apiKey,
+		secretKey: secretKey,
+		client:    binance.NewClient(apiKey, secretKey),
+		userID:    hash.SHA1(apiKey + secretKey)}
 	}
 	connector.timeOffset, _ = connector.client.NewSetServerTimeService().Do(context.Background())
 	return connector
 }
 
+// func (conn *BinancePriceConnector) GetLatestPrice(tradingPair trade.CurrencyPair) (string, error) {
+// 	candles, err := conn.GetCandles(tradingPair, 2, interval.OneMinute)
+// 	if err != nil {
+// 		return "", err
+// 	}
+
+// 	return candles[len(candles)-1].Close, nil
+// }
+
 func (conn *BinancePriceConnector) GetLatestPrice(tradingPair trade.CurrencyPair) (string, error) {
-	candles, err := conn.GetCandles(tradingPair, 2, interval.OneMinute)
+	stats, err := conn.client.NewListPriceChangeStatsService().Symbol(tradingPair.SimpleName()).Do(context.Background())
+
 	if err != nil {
 		return "", err
 	}
 
-	return candles[len(candles)-1].Close, nil
+	return stats[-1].LastPrice //Validar se é o 0 ou o -1 o último status.
+}
+
+
+func (conn *BinancePriceConnector) GetPriceFeed(tradingPair trade.CurrencyPair) <-chan trade.CandleStick {
+	return nil
 }
 
 func (conn *BinancePriceConnector) GetCandles(tradingPair trade.CurrencyPair, qty int, interval trade.CandleTime) ([]trade.CandleStick, error) {
@@ -49,10 +68,6 @@ func (conn *BinancePriceConnector) GetCandles(tradingPair trade.CurrencyPair, qt
 	}
 
 	return priceCandles, nil
-}
-
-func (conn *BinancePriceConnector) GetPriceFeed(tradingPair trade.CurrencyPair) <-chan trade.CandleStick {
-	return nil
 }
 
 func (conn *BinancePriceConnector) GetCandlesInRange(pair trade.CurrencyPair, interval trade.CandleTime, startTime, endTime int64) ([]trade.CandleStick, error) {

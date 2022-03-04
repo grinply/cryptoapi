@@ -11,7 +11,7 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-type BinanceConnector struct {
+type BinanceOrderConnector struct {
 	userID     string //the userID is a hash generate from the apikey + secretkey
 	apiKey     string
 	secretKey  string
@@ -20,9 +20,9 @@ type BinanceConnector struct {
 }
 
 // NewOrderConnector creates a new connector that can open orders on the Binance exchange
-func NewOrderConnector(apiKey, secretKey string, isTestnet bool) *BinanceConnector {
+func NewOrderConnector(apiKey, secretKey string, isTestnet bool) *BinanceOrderConnector {
 	binance.UseTestnet = isTestnet
-	var connector = &BinanceConnector{
+	var connector = &BinanceOrderConnector{
 		apiKey:    apiKey,
 		secretKey: secretKey,
 		client:    binance.NewClient(apiKey, secretKey),
@@ -31,35 +31,12 @@ func NewOrderConnector(apiKey, secretKey string, isTestnet bool) *BinanceConnect
 	return connector
 }
 
-func (conn *BinanceConnector) GetWalletBalances() ([]trade.Asset, error) {
-	res, err := conn.client.NewGetAccountService().Do(context.Background())
-	if err != nil {
-		return nil, err
-	}
-
-	var balances = make([]trade.Asset, 0, len(res.Balances))
-
-	for _, asset := range res.Balances {
-		freeAmount, _ := decimal.NewFromString(asset.Free)
-		lockedAmount, _ := decimal.NewFromString(asset.Locked)
-
-		if freeAmount.GreaterThan(decimal.Zero) || lockedAmount.GreaterThan(decimal.Zero) {
-			balances = append(balances, trade.Asset{
-				Name:      asset.Asset,
-				FreeQty:   asset.Free,
-				LockedQty: asset.Locked,
-			})
-		}
-	}
-	return balances, nil
-}
-
-func (conn *BinanceConnector) GetOrderByID(tradingPair trade.CurrencyPair, orderID string) (*trade.Order, error) {
+func (conn *BinanceOrderConnector) FindOrderByID(tradingPair trade.CurrencyPair, orderID string) (*trade.Order, error) {
 	id, err := strconv.ParseInt(orderID, 10, 64)
 	if err != nil {
 		return nil, fmt.Errorf("the provided id is invalid, couldn't apply the required trandformation from string to integer. %v", err.Error())
 	}
-
+	
 	order, err := conn.client.NewGetOrderService().Symbol(tradingPair.SimpleName()).
 		OrderID(id).Do(context.Background())
 
@@ -69,7 +46,7 @@ func (conn *BinanceConnector) GetOrderByID(tradingPair trade.CurrencyPair, order
 	return convertOrder(order, tradingPair), nil
 }
 
-func (conn *BinanceConnector) OpenOrder(order trade.Order) (string, error) {
+func (conn *BinanceOrderConnector) NewOpenOrder(order trade.Order) (string, error) {
 	orderResponse, err := conn.client.NewCreateOrderService().Symbol(order.TradingPair.SimpleName()).
 		Side(binance.SideType(order.Direction)).
 		Type(binance.OrderTypeLimit).
@@ -85,7 +62,7 @@ func (conn *BinanceConnector) OpenOrder(order trade.Order) (string, error) {
 	return fmt.Sprintf("%v", orderResponse.OrderID), nil
 }
 
-func (conn *BinanceConnector) GetAllOpenOrders(tradingPair trade.CurrencyPair) ([]trade.Order, error) {
+func (conn *BinanceOrderConnector) OpenOrders(tradingPair trade.CurrencyPair) ([]trade.Order, error) {
 	openOrders, err := conn.client.NewListOpenOrdersService().Symbol(tradingPair.SimpleName()).
 		Do(context.Background())
 
@@ -101,13 +78,13 @@ func (conn *BinanceConnector) GetAllOpenOrders(tradingPair trade.CurrencyPair) (
 	return orders, nil
 }
 
-func (conn *BinanceConnector) CancelOrder(tradingPair trade.CurrencyPair, orderID string) error {
-	_, err := conn.client.NewCancelOrderService().OrderID(111).Symbol(tradingPair.SimpleName()).
+func (conn *BinanceOrderConnector) CancelOrder(tradingPair trade.CurrencyPair, orderID string) error {
+	_, err := conn.client.NewCancelOrderService().OrderID(orderID).Symbol(tradingPair.SimpleName()).
 		Do(context.Background())
 	return err
 }
 
-func (conn *BinanceConnector) CancelAllOpenOrders(tradingPair trade.CurrencyPair) error {
+func (conn *BinanceOrderConnector) CancelOpenOrders(tradingPair trade.CurrencyPair) error {
 	_, err := conn.client.NewCancelOpenOrdersService().Symbol(tradingPair.SimpleName()).Do(context.Background())
 	return err
 }
