@@ -20,26 +20,14 @@ type BinancePriceConnector struct {
 	client     *binance.Client
 }
 
-func NewPriceConnector(apiKey, secretKey string, isTestnet bool) *BinancePriceConnector {
-	binance.UseTestnet = isTestnet
-	var connector = &BinancePriceConnector{
-		apiKey:    apiKey,
-		secretKey: secretKey,
-		client:    binance.NewClient(apiKey, secretKey),
-		userID:    hash.SHA1(apiKey + secretKey)}
+func NewPriceConnector() *BinancePriceConnector {
+		var connector = &BinancePriceConnector{
+			client:    binance.NewClient("", "")
+		}
 	}
 	connector.timeOffset, _ = connector.client.NewSetServerTimeService().Do(context.Background())
 	return connector
 }
-
-// func (conn *BinancePriceConnector) GetLatestPrice(tradingPair trade.CurrencyPair) (string, error) {
-// 	candles, err := conn.GetCandles(tradingPair, 2, interval.OneMinute)
-// 	if err != nil {
-// 		return "", err
-// 	}
-
-// 	return candles[len(candles)-1].Close, nil
-// }
 
 func (conn *BinancePriceConnector) GetLatestPrice(tradingPair trade.CurrencyPair) (string, error) {
 	stats, err := conn.client.NewListPriceChangeStatsService().Symbol(tradingPair.SimpleName()).Do(context.Background())
